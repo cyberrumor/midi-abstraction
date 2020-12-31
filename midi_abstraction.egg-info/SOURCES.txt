@@ -1,8 +1,0 @@
-README.md
-setup.py
-midi_abstraction/__init__.py
-midi_abstraction/midi_abstraction.py
-midi_abstraction.egg-info/PKG-INFO
-midi_abstraction.egg-info/SOURCES.txt
-midi_abstraction.egg-info/dependency_links.txt
-midi_abstraction.egg-info/top_level.txt
