@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: midi-abstraction
+Version: 0.8.1
+Summary: Abstract MIDI pitches into keys, chords and notes.
+Home-page: https://github.com/cyberrumor/midi_abstraction
+Author: Marco Silva
+Author-email: cyberrumor@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.9
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
