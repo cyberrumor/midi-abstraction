@@ -26,6 +26,8 @@ class Key:
 		# initialize our notes
 		notes = Notes()
 
+		self.name = name
+
 		# get our chords from key
 		if name == 'a_major':
 			self.chords = {
@@ -274,6 +276,24 @@ class Key:
 		for key, value in self.chords.items():
 			new_dict[key] = [i[octave] for i in self.chords[key]]
 
+		return new_dict
+
+	def diatonic_chords(self):
+		new_dict = {}
+		if 'major' in self.name:
+			diatonics = [i for i in self.chords if 'seventh' not in i and 'dim' not in i]
+		else:
+			diatonics = [i for i in self.chords if 'seventh' not in i]
+		for i in diatonics:
+			if i in self.chords.keys():
+				new_dict[i] = self.chords[i]
+		return new_dict
+
+	def diatonic_chords_in_octave(self, octave):
+		diatonics = self.diatonic_chords()
+		new_dict = {}
+		for key, value in diatonics.items():
+			new_dict[key] = [i[octave] for i in value]
 		return new_dict
 
 	def notes_in_octave(self, octave):
