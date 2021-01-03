@@ -280,10 +280,7 @@ class Key:
 
 	def diatonic_chords(self):
 		new_dict = {}
-		if 'major' in self.name:
-			diatonics = [i for i in self.chords if 'seventh' not in i and 'dim' not in i]
-		else:
-			diatonics = [i for i in self.chords if 'seventh' not in i]
+		diatonics = [i for i in self.chords if 'seventh' not in i]
 		for i in diatonics:
 			if i in self.chords.keys():
 				new_dict[i] = self.chords[i]
@@ -293,6 +290,30 @@ class Key:
 		diatonics = self.diatonic_chords()
 		new_dict = {}
 		for key, value in diatonics.items():
+			new_dict[key] = [i[octave] for i in value]
+		return new_dict
+
+	def pentatonic_chords(self):
+		diatonics = self.diatonic_chords()
+		pentatonics = [i for i in diatonics.keys()]
+		if 'major' in self.name:
+			# remove the 7th and 4th notes.
+			pentatonics.pop(6)
+			pentatonics.pop(3)
+		else:
+			# flat the 3rd and 7th notes, remove 2nd and 6th.
+			pentatonics.pop(5)
+			pentatonics.pop(1)
+
+		new_dict = {}
+		for i in pentatonics:
+			if i in self.chords.keys():
+				new_dict[i] = self.chords[i]
+		return new_dict
+
+	def pentatonic_chords_in_octave(self, octave):
+		new_dict = {}
+		for key, value in self.pentatonic_chords().items():
 			new_dict[key] = [i[octave] for i in value]
 		return new_dict
 
