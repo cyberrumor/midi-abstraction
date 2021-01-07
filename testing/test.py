@@ -1,59 +1,53 @@
 #!/usr/bin/env python3
 import midi_abstraction
 
-a_major = midi_abstraction.Key('a_major')
-a_minor = midi_abstraction.Key('a_minor')
-b_major = midi_abstraction.Key('b_major')
-b_minor = midi_abstraction.Key('b_minor')
-c_major = midi_abstraction.Key('c_major')
-c_minor = midi_abstraction.Key('c_minor')
-d_major = midi_abstraction.Key('d_major')
-d_minor = midi_abstraction.Key('d_minor')
-e_major = midi_abstraction.Key('e_major')
-e_minor = midi_abstraction.Key('e_minor')
-f_major = midi_abstraction.Key('f_major')
-f_minor = midi_abstraction.Key('f_minor')
-g_major = midi_abstraction.Key('g_major')
-g_minor = midi_abstraction.Key('g_minor')
 
-all_keys = [
-	a_major,
-	a_minor,
-	b_major,
-	b_minor,
-	c_major,
-	c_minor,
-	d_major,
-	d_minor,
-	e_major,
-	e_minor,
-	f_major,
-	f_minor,
-	g_major,
-	g_minor
-]
+# list all keys
+all_keys = midi_abstraction.list_key_names()
 
-for i in all_keys:
+# list all modes
+all_modes = midi_abstraction.list_mode_names()
+
+# list all notes
+all_notes = midi_abstraction.list_note_names()
+
+# Methods that return lists start with 'lists'.
+# others that return lists end with 'names'.
+# everything else returns a dictionary.
+
+
+# let's pick an octave to write music in.
+octave = 3
+
+our_song_key = midi_abstraction.Key('a_major')
+print(f'aware of name: {our_song_key.name}')
+print()
+
+for name_of_mode in our_song_key.list_mode_names():
 	print()
-	print(f'{i.name}.name: {i.name}')
+	print(f'dict of mode is here for easy access: our_song_key.{name_of_mode}')
 	print()
-	print(f'{i.name}.chords_in_octave(3): {i.chords_in_octave(3)}')
+	print(f'list chords in specific mode: our_song_key.list_chords_in_mode("{name_of_mode}")')
 	print()
-	print(f'{i.name}.diatonic_chords(): {i.diatonic_chords()}')
+	print('we also have access to all chords/notes in specific mode and specific octave:')
 	print()
-	print(f'{i.name}.diatonic_chords_in_octave(3): {i.diatonic_chords_in_octave(3)}')
-	print()
-	print(f'{i.name}.pentatonic_chords(): {i.pentatonic_chords()}')
-	print()
-	print(f'{i.name}.pentatonic_chords_in_octave(3): {i.pentatonic_chords_in_octave(3)}')
-	print()
-	print(f'{i.name}.notes_in_octave(3): {i.notes_in_octave(3)}')
-	print()
-	print(f'{i.name}.notes_in_key(): {i.notes_in_key()}')
-	print()
-	print(f'{i.name}.chords_in_key(): {i.chords_in_key()}')
+	print(f'our_song_key.chords_in_modal_octave("{name_of_mode}", {octave}): {our_song_key.chords_in_modal_octave(name_of_mode, octave)}')
 	print()
 
+print(f'list of chords and their notes in specific octave: {our_song_key.chords_in_octave(octave)}')
+print()
+print(f'list of chord names: {our_song_key.list_chord_names()}')
+print()
+print(f'seniority: {our_song_key.seniority}')
+print()
+
+print('If we want a list of midi pitches for a named note instead of a chord or key, we can get it like this:')
+print()
+print('note = midi_abstraction.Notes()')
+note = midi_abstraction.Notes()
+print()
+print(f'note.As: {note.As} \n\n note.As[{octave}]: {note.As[octave]}')
+print()
 
 
 
