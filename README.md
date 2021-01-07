@@ -4,6 +4,12 @@ Abstract midi pitches into keys, chords, modes and notes.
 
 This, combined with a midi file creation package like 'mido', and maybe a little help from builtin 'random', is all you need to procedurally generate music.
 
+
+# Installation
+```pip install midi_abstraction```
+
+# Usage
+
 ```
 #!/usr/bin/env python3
 import midi_abstraction
