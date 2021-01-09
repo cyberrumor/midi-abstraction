@@ -20,6 +20,29 @@ class Notes:
 		self.Eb = [i * 12 + 3 for i in range(0, 11)]
 		self.Gb = [i * 12 + 6 for i in range(0, 11)]
 
+		self.all = {
+			'as': [i * 12 + 10 for i in range(0, 10)],
+			'a': [i * 12 + 9 for i in range(0, 10)],
+			'b': [i * 12 + 11 for i in range(0, 10)],
+			'cs': [i * 12 + 1 for i in range(0, 11)],
+			'c': [i * 12 for i in range(0, 11)],
+			'ds': [i * 12 + 3 for i in range(0, 11)],
+			'd': [i * 12 + 2 for i in range(0, 11)],
+			'e': [i * 12 + 4 for i in range(0, 11)],
+			'es': [i * 12 + 5 for i in range(0, 11)],
+			'fs': [i * 12 + 6 for i in range(0, 11)],
+			'f': [i * 12 + 5 for i in range(0, 11)],
+			'gs': [i * 12 + 8 for i in range(0, 10)],
+			'g': [i * 12 + 7 for i in range(0, 11)],
+			'ab': [i * 12 + 8 for i in range(0, 10)],
+			'bb': [i * 12 + 10 for i in range(0, 10)],
+			'db': [i * 12 + 1 for i in range(0, 11)],
+			'eb': [i * 12 + 3 for i in range(0, 11)],
+			'gb': [i * 12 + 6 for i in range(0, 11)]
+		}
+
+
+
 	def list_notes(self):
 		return list_note_names()
 
@@ -158,8 +181,26 @@ class Key:
 		for key in list(rough_modes.keys()):
 			index = 0
 			modes[key] = {}
-			modes[key]['chords'] = {}
+			modes[key]['notes'] = {}
 			for step in range(len(rough_modes[key]['steps'])):
+				name = slice[index]
+				modes[key]['notes'][name] = notes.all[name]
+				index += rough_modes[key]['steps'][step]
+
+		self.raw_modal_database = modes
+		self.ionian = modes['ionian']['notes']
+		self.dorian = modes['dorian']['notes']
+		self.phrygian = modes['phrygian']['notes']
+		self.lydian = modes['lydian']['notes']
+		self.mixolydian = modes['mixolydian']['notes']
+		self.aeolian = modes['aeolian']['notes']
+		self.locrian = modes['locrian']['notes']
+
+		for key in list(rough_modes['ionian'].keys()):
+			index = 0
+			self_chords = {}
+			for step in range(len(rough_modes['ionian']['steps'])):
+				name = slice[index]
 				if numerals[step].isupper() and 'd' not in numerals[step]:
 					name = slice[index] + '_major'
 				elif numerals[step].isupper() and 'd' in numerals[step]:
@@ -169,18 +210,9 @@ class Key:
 				elif numerals[step].islower() and 'd' in numerals[step]:
 					name = slice[index] + '_dim'
 
-				modes[key]['chords'][name] = chords[name]
-				index += rough_modes[key]['steps'][step]
-
-		self.raw_modal_database = modes
-		self.chords = modes['ionian']['chords']
-		self.ionian = modes['ionian']['chords']
-		self.dorian = modes['dorian']['chords']
-		self.phrygian = modes['phrygian']['chords']
-		self.lydian = modes['lydian']['chords']
-		self.mixolydian = modes['mixolydian']['chords']
-		self.aeolian = modes['aeolian']['chords']
-		self.locrian = modes['locrian']['chords']
+				self_chords[name] = chords[name]
+				index += rough_modes['ionian']['steps'][step]
+		self.chords = self_chords
 
 		if 'major' in self.name:
 			self.seniority = 'major'
@@ -188,8 +220,8 @@ class Key:
 			self.seniority = 'minor' 
 
 	# RETURNS LIST
-	def list_chord_names_in_mode(self, modename):
-		return [i for i in list(self.raw_modal_database[modename]['chords'].keys())]
+	def list_note_names_in_mode(self, modename):
+		return [i for i in list(self.raw_modal_database[modename]['notes'].keys())]
 
 	def list_chord_names(self):
 		return [i for i in list(self.chords.keys())]
@@ -197,28 +229,19 @@ class Key:
 	def list_mode_names(self):
 		return list_mode_names()
 
-	def list_notes_in_key(self):
-		new_list = []
-		for key, value in self.chords_in_mode('ionian').items():
-			for chord in value:
-				for note in chord:
-					if note not in new_list:
-						new_list.append(note)
-		new_list.sort()
-		return new_list
-
 	def list_notes_in_octave(self, octave):
-		new_list = []
-		for key, value in self.chords_in_mode('ionian').items():
-			for chord in value:
-				if chord[octave] not in new_list:
-					new_list.append(chord[octave])
-		new_list.sort()
-		return new_list
+		list_one = [i for i in list(self.chords_in_octave(octave).values())]
+		result = []
+		for item in list_one:
+			for i in item:
+				if i not in result:
+					result.append(i)
+		return result
+
 
 	# RETURNS DICT
-	def chords_in_mode(self, modename):
-		return self.raw_modal_database[modename]['chords']
+	def notes_in_mode(self, modename):
+		return self.raw_modal_database[modename]['notes']
 
 	def chords_in_octave(self, octave):
 		new_dict = {}
@@ -226,11 +249,7 @@ class Key:
 			new_dict[key] = [i[octave] for i in self.chords[key]]
 		return new_dict
 
-	def chords_in_modal_octave(self, modename, octave):
-		new_dict = {}
-		for key, value in self.raw_modal_database[modename]['chords'].items():
-			new_dict[key] = [i[octave] for i in value]
-		return new_dict
+
 
 def list_mode_names():
 	return [
