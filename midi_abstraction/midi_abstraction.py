@@ -44,7 +44,7 @@ class Notes:
 
 
 	def list_notes(self):
-		return list_note_names()
+		return list_notes()
 
 class Key:
 	def __init__(self, name):
@@ -125,6 +125,7 @@ class Key:
 		}
 
 		universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
+		self.universe = universe
 		W = 2
 		H = 1
 		if 'major' in name.lower() and name[0].lower() in universe:
@@ -157,15 +158,17 @@ class Key:
 		else:
 			raise NameError(f'{name} is not a valid musical key.')
 
+		self.numerals = numerals
+
 		# get the notes for each mode
 		slice = universe[root:]
 		ionian = default_mode
-		dorian = [default_mode[6]] + default_mode[0:6]
-		phrygian = default_mode[5:] + default_mode[0:5]
-		lydian = default_mode[4:] + default_mode[0:4]
-		mixolydian = default_mode[3:] + default_mode[0:3]
-		aeolian = default_mode[2:] + default_mode[0:2]
-		locrian = default_mode[1:] + [default_mode[0]]
+		locrian = [default_mode[6]] + default_mode[0:6]
+		aeolian = default_mode[5:] + default_mode[0:5]
+		mixolydian = default_mode[4:] + default_mode[0:4]
+		lydian = default_mode[3:] + default_mode[0:3]
+		phrygian = default_mode[2:] + default_mode[0:2]
+		dorian = default_mode[1:] + [default_mode[0]]
 
 		rough_modes = {
 			'ionian': {'steps': ionian, 'notes': []},
@@ -188,13 +191,13 @@ class Key:
 				index += rough_modes[key]['steps'][step]
 
 		self.raw_modal_database = modes
-		self.ionian = modes['ionian']['notes']
-		self.dorian = modes['dorian']['notes']
-		self.phrygian = modes['phrygian']['notes']
-		self.lydian = modes['lydian']['notes']
-		self.mixolydian = modes['mixolydian']['notes']
-		self.aeolian = modes['aeolian']['notes']
-		self.locrian = modes['locrian']['notes']
+		#self.ionian = modes['ionian']['notes']
+		#self.dorian = modes['dorian']['notes']
+		#self.phrygian = modes['phrygian']['notes']
+		#self.lydian = modes['lydian']['notes']
+		#self.mixolydian = modes['mixolydian']['notes']
+		#self.aeolian = modes['aeolian']['notes']
+		#self.locrian = modes['locrian']['notes']
 
 		for key in list(rough_modes['ionian'].keys()):
 			index = 0
@@ -220,14 +223,14 @@ class Key:
 			self.seniority = 'minor' 
 
 	# RETURNS LIST
-	def list_note_names_in_mode(self, modename):
+	def list_notes_in_mode(self, modename):
 		return [i for i in list(self.raw_modal_database[modename]['notes'].keys())]
 
-	def list_chord_names(self):
+	def list_chords(self):
 		return [i for i in list(self.chords.keys())]
 
-	def list_mode_names(self):
-		return list_mode_names()
+	def list_modes(self):
+		return list_modes()
 
 	def list_notes_in_octave(self, octave):
 		list_one = [i for i in list(self.chords_in_octave(octave).values())]
@@ -237,6 +240,15 @@ class Key:
 				if i not in result:
 					result.append(i)
 		return result
+
+	def list_notes_in_pentatonic_major(self):
+		pents = self.notes_in_pentatonic_major()
+		return list(pents.keys())
+
+
+	def list_notes_in_pentatonic_minor(self):
+		pents = self.notes_in_pentatonic_minor()
+		return list(pents.keys())
 
 
 	# RETURNS DICT
@@ -249,9 +261,55 @@ class Key:
 			new_dict[key] = [i[octave] for i in self.chords[key]]
 		return new_dict
 
+	def notes_in_pentatonic_minor(self):
+		new_dict = {}
+		notes = Notes()
+		if self.seniority == 'minor':
+			scale = self.list_notes_in_mode('ionian')
+			try:
+				flatted_three = self.universe[self.universe.index(scale[2])]
+			except:
+				flatted_three = self.universe[self.universe.index('gs')]
+			try:
+				flatted_seventh = self.universe[self.universe.index(scale[6])]
+			except:
+				flatted_seventh = self.universe[self.universe.index('gs')]
+
+			pentatonics = [scale[0], flatted_three, scale[3], scale[4], flatted_seventh]
+
+			for i in pentatonics:
+				new_dict[i] = notes.all[i]
+
+			return new_dict
+
+		elif self.seniority == 'major':
+			name = self.name
+			new_name = self.name.replace('major', 'minor')
+			k = Key(new_name)
+			return k.notes_in_pentatonic_minor()
+
+	def notes_in_pentatonic_major(self):
+		new_dict = {}
+		notes = Notes()
+		if self.seniority == 'major':
+			pentatonics = self.list_notes_in_mode('ionian')
+			pentatonics.pop(6)
+			pentatonics.pop(3)
+			for i in pentatonics:
+				new_dict[i] = notes.all[i]
+			return new_dict
+
+		elif self.seniority == 'minor':
+			name = self.name
+			new_name = self.name.replace('minor', 'major')
+			k = Key(new_name)
+			return k.notes_in_pentatonic_major()
 
 
-def list_mode_names():
+
+
+
+def list_modes():
 	return [
 		'ionian',
 		'dorian',
@@ -262,7 +320,7 @@ def list_mode_names():
 		'locrian'
 	]
 
-def list_note_names():
+def list_notes():
 	return [
 		'As',
 		'A',
@@ -284,7 +342,7 @@ def list_note_names():
 		'Gb'
 	]
 
-def list_key_names():
+def list_keys():
         return [
 		'a_major',
 		'a_minor',

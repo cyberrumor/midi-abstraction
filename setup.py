@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding = 'utf-8') as fh:
 
 setuptools.setup(
 	name = 'midi-abstraction',
-	version = '0.9.1',
+	version = '0.9.2',
 	author = 'Marco Silva',
 	author_email = 'cyberrumor@gmail.com',
 	description = 'Abstract MIDI pitches into keys, chords, modes, notes, and octaves.',

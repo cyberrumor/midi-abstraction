@@ -1,6 +1,6 @@
 # midi_abstraction
 
-Abstract midi pitches into keys, chords, modes and notes.
+Abstract midi pitches into keys, chords, modes, scales, and notes.
 
 This, combined with a midi file creation package like 'mido', and maybe a little help from builtin 'random', is all you need to procedurally generate music.
 
@@ -15,31 +15,32 @@ This, combined with a midi file creation package like 'mido', and maybe a little
 import midi_abstraction
 
 # get a list of keys
-available_keys = midi_abstraction.list_key_names()
+available_keys = midi_abstraction.list_keys()
 
 # get a list of available notes
-available_notes = midi_abstraction.list_note_names()
+available_notes = midi_abstraction.list_notes()
 
 # get a list of available modes
-available_modes = midi_abstraction.list_mode_names()
+available_modes = midi_abstraction.list_modes()
 
 # create a musical key object
 songkey = midi_abstraction.Key('a_major')
 
 # list chords in the key
-songkey.list_chord_names()
+songkey.list_chords()
 
 # list note names in mode
-songkey.list_note_names_in_mode('mixolydian')
+songkey.list_notes_in_mode('mixolydian')
 
 # list midi note pitches in specific octave
 songkey.list_notes_in_octave(4)
 
 # access a dict of chords in songkey here.
 chords = songkey.chords
-# you can also access modes like this.
-ionian = songkey.ionian
 
+# access pentatonic major and minor scales
+pentatonic_major = songkey.list_notes_in_pentatonic_major()
+pentatonic_minor = songkey.list_notes_in_pentatonic_minor()
 
 # iterate through the chords to get midi pitches.
 for key, value in songkey.chords.items():
@@ -47,5 +48,11 @@ for key, value in songkey.chords.items():
 
 # print chord names and midi pitches of the notes in each chord, specifying octave.
 print(songkey.chords_in_octave(4))
+
+# turn any named note into a midi pitch
+notes = Notes()
+c_sharp_pitch = notes.all['cs']
+
+
 
 ```
