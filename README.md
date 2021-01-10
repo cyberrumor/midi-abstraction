@@ -53,6 +53,8 @@ print(songkey.chords_in_octave(4))
 notes = Notes()
 c_sharp_pitch = notes.all['cs']
 
-
+# get any chord from any key, or pitches of any note outside of the key
+songkey.universal_chords
+songkey.universal_notes
 
 ```

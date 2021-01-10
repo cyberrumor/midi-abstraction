@@ -125,7 +125,7 @@ class Key:
 		}
 
 		universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
-		self.universe = universe
+		self.universal_notes = universe
 		W = 2
 		H = 1
 		if 'major' in name.lower() and name[0].lower() in universe:
@@ -215,7 +215,10 @@ class Key:
 
 				self_chords[name] = chords[name]
 				index += rough_modes['ionian']['steps'][step]
+
 		self.chords = self_chords
+		self.universal_chords = chords
+
 
 		if 'major' in self.name:
 			self.seniority = 'major'
