@@ -270,13 +270,13 @@ class Key:
 		if self.seniority == 'minor':
 			scale = self.list_notes_in_mode('ionian')
 			try:
-				flatted_three = self.universe[self.universe.index(scale[2])]
+				flatted_three = self.universal_notes[self.universal_notes.index(scale[2])]
 			except:
-				flatted_three = self.universe[self.universe.index('gs')]
+				flatted_three = self.universal_notes[self.universal_notes.index('gs')]
 			try:
-				flatted_seventh = self.universe[self.universe.index(scale[6])]
+				flatted_seventh = self.universal_notes[self.universal_notes.index(scale[6])]
 			except:
-				flatted_seventh = self.universe[self.universe.index('gs')]
+				flatted_seventh = self.universal_notes[self.universal_notes.index('gs')]
 
 			pentatonics = [scale[0], flatted_three, scale[3], scale[4], flatted_seventh]
 

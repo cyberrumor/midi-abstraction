@@ -17,6 +17,6 @@ for k in midi_abstraction.list_keys():
 
 	print(f'numerals: {song_key.numerals}')
 
-
+print(f'song_key.universal_notes: {song_key.universal_notes}')
 
 
