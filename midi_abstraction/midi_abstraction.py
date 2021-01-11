@@ -127,6 +127,7 @@ class Key:
 		universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
 		self.universal_chords = chords
 		self.universal_notes = notes.all
+		self.list_universal_notes = universe
 		W = 2
 		H = 1
 		if 'major' in name.lower() and name[0].lower() in universe:
@@ -288,22 +289,21 @@ class Key:
 
 	def notes_in_pentatonic_minor(self):
 		new_dict = {}
-		notes = Notes()
 		if self.seniority == 'minor':
 			scale = self.list_notes_in_mode('ionian')
 			try:
-				flatted_three = self.universal_notes[self.universal_notes.index(scale[2])]
+				flatted_three = self.list_universal_notes[self.list_universal_notes.index(scale[2])]
 			except:
-				flatted_three = self.universal_notes[self.universal_notes.index('gs')]
+				flatted_three = self.list_universal_notes[self.list_universal_notes.index('gs')]
 			try:
-				flatted_seventh = self.universal_notes[self.universal_notes.index(scale[6])]
+				flatted_seventh = self.list_universal_notes[self.list_universal_notes.index(scale[6])]
 			except:
-				flatted_seventh = self.universal_notes[self.universal_notes.index('gs')]
+				flatted_seventh = self.list_universal_notes[self.list_universal_notes.index('gs')]
 
 			pentatonics = [scale[0], flatted_three, scale[3], scale[4], flatted_seventh]
 
 			for i in pentatonics:
-				new_dict[i] = notes.all[i]
+				new_dict[i] = self.universal_notes[i]
 
 			return new_dict
 
@@ -315,13 +315,12 @@ class Key:
 
 	def notes_in_pentatonic_major(self):
 		new_dict = {}
-		notes = Notes()
 		if self.seniority == 'major':
 			pentatonics = self.list_notes_in_mode('ionian')
 			pentatonics.pop(6)
 			pentatonics.pop(3)
 			for i in pentatonics:
-				new_dict[i] = notes.all[i]
+				new_dict[i] = self.universal_notes[i]
 			return new_dict
 
 		elif self.seniority == 'minor':
@@ -329,9 +328,6 @@ class Key:
 			new_name = self.name.replace('minor', 'major')
 			k = Key(new_name)
 			return k.notes_in_pentatonic_major()
-
-
-
 
 
 def list_modes():
