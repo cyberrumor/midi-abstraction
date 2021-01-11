@@ -126,7 +126,7 @@ class Key:
 
 		universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
 		self.universal_chords = chords
-		self.universal_notes = universe
+		self.universal_notes = notes.all
 		W = 2
 		H = 1
 		if 'major' in name.lower() and name[0].lower() in universe:
