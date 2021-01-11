@@ -125,6 +125,7 @@ class Key:
 		}
 
 		universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
+		self.universal_chords = chords
 		self.universal_notes = universe
 		W = 2
 		H = 1
@@ -217,8 +218,6 @@ class Key:
 				index += rough_modes['ionian']['steps'][step]
 
 		self.chords = self_chords
-		self.universal_chords = chords
-
 
 		if 'major' in self.name:
 			self.seniority = 'major'
@@ -231,6 +230,22 @@ class Key:
 
 	def list_chords(self):
 		return [i for i in list(self.chords.keys())]
+
+	def list_chords_in_mode(self, modename):
+		chords_in_mode = []
+		mode_notes = self.list_notes_in_mode(modename)
+		for i in range(len(mode_notes)):
+			num = self.numerals[i]
+			if num.isupper() and 'd' not in num:
+				name = mode_notes[i] + '_major'
+			elif num.isupper() and 'd' in num:
+				name = mode_notes[i] + '_major_dim'
+			elif num.islower() and 'd' not in num:
+				name = mode_notes[i] + '_minor'
+			elif num.islower() and 'd' in num:
+				name = mode_notes[i] + '_dim'
+			chords_in_mode.append(name)
+		return chords_in_mode
 
 	def list_modes(self):
 		return list_modes()
@@ -262,6 +277,13 @@ class Key:
 		new_dict = {}
 		for key, value in self.chords.items():
 			new_dict[key] = [i[octave] for i in self.chords[key]]
+		return new_dict
+
+	def chords_in_mode(self, modename):
+		new_dict = {}
+		chord_names = self.list_chords_in_mode(modename)
+		for i in chord_names:
+			new_dict[i] = self.universal_chords[i]
 		return new_dict
 
 	def notes_in_pentatonic_minor(self):
