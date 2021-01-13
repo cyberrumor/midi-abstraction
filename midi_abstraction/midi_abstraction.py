@@ -269,6 +269,18 @@ class Key:
 		pents = self.notes_in_pentatonic_minor()
 		return list(pents.keys())
 
+	def list_notes_in_harmonic_minor(self):
+		if self.seniority == 'minor':
+			diatonics = self.list_notes_in_mode('ionian')
+			target = diatonics[-1]
+			new_target = self.list_universal_notes[self.list_universal_notes.index(target) + 1]
+			diatonics.pop(-1)
+			diatonics.append(new_target)
+			return diatonics
+		else:
+			name = self.name.split('_')[0] + '_minor'
+			alt_self = Key(name)
+			return alt_self.list_notes_in_harmonic_minor()
 
 	# RETURNS DICT
 	def notes_in_mode(self, modename):
