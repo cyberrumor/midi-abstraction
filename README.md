@@ -14,47 +14,71 @@ This, combined with a midi file creation package like 'mido', and maybe a little
 #!/usr/bin/env python3
 import midi_abstraction
 
-# get a list of keys
-available_keys = midi_abstraction.list_keys()
+# create a key object. Note + either major or minor or modename
+k = midi_abstraction.Key('d_dorian')
 
-# get a list of available notes
-available_notes = midi_abstraction.list_notes()
+# available list methods
+k.list_notes()
+k.list_chords()
+k.list_notes_in_octave(3)
+k.list_notes_in_pentatonic_minor()
+k.list_notes_in_pentatonic_major()
 
-# get a list of available modes
-available_modes = midi_abstraction.list_modes()
+# available dict methods
+k.chords_in_octave(3)
+k.notes_in_pentatonic_minor()
+k.notes_in_pentatonic_major()
 
-# create a musical key object
-songkey = midi_abstraction.Key('a_major')
 
-# list chords in the key
-songkey.list_chords()
+# attributes
+k.name
+k.seniority
+k.mode
+k.chords
+k.notes
 
-# list note names in mode
-songkey.list_notes_in_mode('mixolydian')
+### functions not tied to a class ###
 
-# list midi note pitches in specific octave
-songkey.list_notes_in_octave(4)
+# get the midi pitches of a specific note
+midi_abstraction.notes('a')
 
-# access a dict of chords in songkey here.
-chords = songkey.chords
+# get midi pitch of a specific note in specific cotave
+midi_abstraction.notes('cs')[4]
 
-# access pentatonic major and minor scales
-pentatonic_major = songkey.list_notes_in_pentatonic_major()
-pentatonic_minor = songkey.list_notes_in_pentatonic_minor()
+# get a list of all available notes
+midi_abstraction.list_notes()
 
-# iterate through the chords to get midi pitches.
-for key, value in songkey.chords.items():
-	print(f'{key}: {value})
+# get a list of major and minor keys (doesn't list modal keys)
+midi_abstraction.list_keys()
 
-# print chord names and midi pitches of the notes in each chord, specifying octave.
-print(songkey.chords_in_octave(4))
+# get a list of mode names
+midi_abstraction.list_modes()
 
-# turn any named note into a midi pitch
-notes = Notes()
-c_sharp_pitch = notes.all['cs']
+# if you need to iterate through note names and don't want to hit an out of range index, use universe:
+midi_abstraction.universe()
 
-# get any chord from any key, or pitches of any note outside of the key
-songkey.universal_chords
-songkey.universal_notes
+# get the midi pitches of notes in a specific chord:
+midi_abstraction.chords('c_major')
+
+# you can also invent your own chords like this if you want to get weird.
+midi_abstraction.chords('cs_e_ab')
+
+
+#### examples of how to use ######
+# get a random modal key and create an instance of it.
+import random
+n = random.choice(midi_abstraction.list_notes())
+m = random.choice(midi_abstraction.list_keys())
+k = midi_abstraction.Key(n + '_' + m)
+
+# get some chords
+first = k.list_chords()[0]
+second = random.choice(k.list_chords())
+third = random.choice(k.list_chords())
+
+# you need mido to write midi files
+import mido
+
+# you can use a loop on [first, second, third] to push the pitches into mido tracks. Good luck!
 
 ```
