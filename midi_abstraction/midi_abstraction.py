@@ -41,6 +41,8 @@ def list_keys():
 	]
 
 def notes(name):
+	if type(name) != str:
+		raise TypeError(f'midi_abstraction.notes({name}) was fed a {type(name)} but expected a string.')
 	note_dict = {
 		'as': [i * 12 + 10 for i in range(0, 10)],
 		'a': [i * 12 + 9 for i in range(0, 10)],
@@ -198,16 +200,25 @@ class Key:
 			self.mode = name.split('_')[1].lower()
 
 		if self.mode in mode_structures:
-			if self.mode in ['major', 'ionian', 'lydian', 'mixolydian']:
-				# major modes
+			if self.mode in ['major', 'ionian']:
 				numerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'viid']
 				self.seniority = 'major'
-			elif self.mode in ['minor', 'aeolian', 'dorian', 'phrygian']:
-				# minor modes
+			elif self.mode in ['minor', 'aeolian']:
 				numerals = ['i', 'iid', 'III', 'iv', 'v', 'VI', 'VII']
 				self.seniority = 'minor'
-			else:
-				# locrian
+			elif self.mode == 'dorian':
+				numerals = ['i', 'ii', 'III', 'IV', 'v', 'vid', 'VII']
+				self.seniority = 'minor'
+			elif self.mode == 'phrygian':
+				numerals = ['i', 'II', 'III', 'iv', 'vd', 'VI', 'vii']
+				self.seniority = 'minor'
+			elif self.mode == 'lydian':
+				numerals = ['I', 'II', 'iii', 'ivd', 'V', 'vi', 'vii']
+				self.seniority = 'major'
+			elif self.mode == 'mixolydian':
+				numerals = ['I', 'ii', 'iiid', 'IV', 'v', 'vi', 'VII']
+				self.seniority = 'major'
+			elif self.mode == 'locrian':
 				numerals = ['id', 'II', 'iii', 'iv', 'V', 'VI', 'vii']
 				self.seniority = 'diminished'
 		else:
