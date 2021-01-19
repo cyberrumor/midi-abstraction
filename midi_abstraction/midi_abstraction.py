@@ -41,29 +41,38 @@ def list_keys():
 	]
 
 def notes(name):
-	if type(name) != str:
-		raise TypeError(f'midi_abstraction.notes({name}) was fed a {type(name)} but expected a string.')
-	note_dict = {
-		'as': [i * 12 + 10 for i in range(0, 10)],
-		'a': [i * 12 + 9 for i in range(0, 10)],
-		'b': [i * 12 + 11 for i in range(0, 10)],
-		'cs': [i * 12 + 1 for i in range(0, 11)],
-		'c': [i * 12 for i in range(0, 11)],
-		'ds': [i * 12 + 3 for i in range(0, 11)],
-		'd': [i * 12 + 2 for i in range(0, 11)],
-		'e': [i * 12 + 4 for i in range(0, 11)],
-		'es': [i * 12 + 5 for i in range(0, 11)],
-		'fs': [i * 12 + 6 for i in range(0, 11)],
-		'f': [i * 12 + 5 for i in range(0, 11)],
-		'gs': [i * 12 + 8 for i in range(0, 10)],
-		'g': [i * 12 + 7 for i in range(0, 11)],
-		'ab': [i * 12 + 8 for i in range(0, 10)],
-		'bb': [i * 12 + 10 for i in range(0, 10)],
-		'db': [i * 12 + 1 for i in range(0, 11)],
-		'eb': [i * 12 + 3 for i in range(0, 11)],
-		'gb': [i * 12 + 6 for i in range(0, 11)]
-	}
-	return note_dict[name.lower()]
+	if type(name) == str:
+		note_dict = {
+			'as': [i * 12 + 10 for i in range(0, 10)],
+			'a': [i * 12 + 9 for i in range(0, 10)],
+			'b': [i * 12 + 11 for i in range(0, 10)],
+			'cs': [i * 12 + 1 for i in range(0, 11)],
+			'c': [i * 12 for i in range(0, 11)],
+			'ds': [i * 12 + 3 for i in range(0, 11)],
+			'd': [i * 12 + 2 for i in range(0, 11)],
+			'e': [i * 12 + 4 for i in range(0, 11)],
+			'es': [i * 12 + 5 for i in range(0, 11)],
+			'fs': [i * 12 + 6 for i in range(0, 11)],
+			'f': [i * 12 + 5 for i in range(0, 11)],
+			'gs': [i * 12 + 8 for i in range(0, 10)],
+			'g': [i * 12 + 7 for i in range(0, 11)],
+			'ab': [i * 12 + 8 for i in range(0, 10)],
+			'bb': [i * 12 + 10 for i in range(0, 10)],
+			'db': [i * 12 + 1 for i in range(0, 11)],
+			'eb': [i * 12 + 3 for i in range(0, 11)],
+			'gb': [i * 12 + 6 for i in range(0, 11)]
+		}
+		return note_dict[name.lower()]
+
+	elif type(name) == int:
+		if name <= 127 and name >= 0:
+			for key, value in note_dict.items():
+				if name in value:
+					return key
+		else:
+			raise ValueError(f'{name} is not in range(0, 127). Therefor, it can\'t be converted into a note name.')
+	else:
+		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a note name or midi pitch.')
 
 def chords(name):
 	chord_dict = {
@@ -152,9 +161,10 @@ def chords(name):
 class Key:
 	def __init__(self, name):
 		self.name = name
-		# universe = ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
+
 		W = 2
 		H = 1
+
 		default_mode = [W, W, H, W, W, W, H]
 
 		locrian = [default_mode[6]] + default_mode[0:6]
