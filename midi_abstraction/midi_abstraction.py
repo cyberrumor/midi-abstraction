@@ -41,27 +41,28 @@ def list_keys():
 	]
 
 def notes(name):
+	note_dict = {
+		'as': [i * 12 + 10 for i in range(0, 10)],
+		'a': [i * 12 + 9 for i in range(0, 10)],
+		'b': [i * 12 + 11 for i in range(0, 10)],
+		'cs': [i * 12 + 1 for i in range(0, 11)],
+		'c': [i * 12 for i in range(0, 11)],
+		'ds': [i * 12 + 3 for i in range(0, 11)],
+		'd': [i * 12 + 2 for i in range(0, 11)],
+		'e': [i * 12 + 4 for i in range(0, 11)],
+		'es': [i * 12 + 5 for i in range(0, 11)],
+		'fs': [i * 12 + 6 for i in range(0, 11)],
+		'f': [i * 12 + 5 for i in range(0, 11)],
+		'gs': [i * 12 + 8 for i in range(0, 10)],
+		'g': [i * 12 + 7 for i in range(0, 11)],
+		'ab': [i * 12 + 8 for i in range(0, 10)],
+		'bb': [i * 12 + 10 for i in range(0, 10)],
+		'db': [i * 12 + 1 for i in range(0, 11)],
+		'eb': [i * 12 + 3 for i in range(0, 11)],
+		'gb': [i * 12 + 6 for i in range(0, 11)]
+	}
+
 	if type(name) == str:
-		note_dict = {
-			'as': [i * 12 + 10 for i in range(0, 10)],
-			'a': [i * 12 + 9 for i in range(0, 10)],
-			'b': [i * 12 + 11 for i in range(0, 10)],
-			'cs': [i * 12 + 1 for i in range(0, 11)],
-			'c': [i * 12 for i in range(0, 11)],
-			'ds': [i * 12 + 3 for i in range(0, 11)],
-			'd': [i * 12 + 2 for i in range(0, 11)],
-			'e': [i * 12 + 4 for i in range(0, 11)],
-			'es': [i * 12 + 5 for i in range(0, 11)],
-			'fs': [i * 12 + 6 for i in range(0, 11)],
-			'f': [i * 12 + 5 for i in range(0, 11)],
-			'gs': [i * 12 + 8 for i in range(0, 10)],
-			'g': [i * 12 + 7 for i in range(0, 11)],
-			'ab': [i * 12 + 8 for i in range(0, 10)],
-			'bb': [i * 12 + 10 for i in range(0, 10)],
-			'db': [i * 12 + 1 for i in range(0, 11)],
-			'eb': [i * 12 + 3 for i in range(0, 11)],
-			'gb': [i * 12 + 6 for i in range(0, 11)]
-		}
 		return note_dict[name.lower()]
 
 	elif type(name) == int:
