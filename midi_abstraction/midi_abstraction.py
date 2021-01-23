@@ -129,7 +129,7 @@ def drums(name):
 	elif type(name) == int:
 		if name >= 35 and name <= 81:
 			for key, value in drum_dict.items():
-				if name in value:
+				if name == value:
 					return key
 		else:
 			raise ValueError(f'{name} is not in range(35, 81), therefor it can\'t be converted into a drum name.')
