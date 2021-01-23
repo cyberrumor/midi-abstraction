@@ -11,7 +11,6 @@ def list_modes():
 		'locrian'
 	]
 
-
 def universe():
         return ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
 
@@ -74,6 +73,69 @@ def notes(name):
 			raise ValueError(f'{name} is not in range(0, 127). Therefor, it can\'t be converted into a note name.')
 	else:
 		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a note name or midi pitch.')
+
+def drums(name):
+	drum_dict = {
+		'acoustic_base_drum': 35,
+		'bass_drum_1': 36,
+		'side_stick': 37,
+		'acoustic_snare': 38,
+		'hand_clap': 39,
+		'electric_snare': 40,
+		'low_floor_tom': 41,
+		'closed_hi_hat': 42,
+		'high_floor_tom': 43,
+		'pedal_hi_hat': 44,
+		'low_tom': 45,
+		'open_hi_hat': 46,
+		'low_mid_tom': 47,
+		'hi_mid_tom': 48,
+		'crash_cymbal_1': 49,
+		'high_tom': 50,
+		'ride_cymbal_1': 51,
+		'chinese_cymbal': 52,
+		'ride_bell': 53,
+		'tambourine': 54,
+		'splash_cymbal': 55,
+		'cowbell': 56,
+		'crash_cymbal_2': 57,
+		'vibraslap': 58,
+		'ride_cymbal_2': 59,
+		'hi_bongo': 60,
+		'low_bongo': 61,
+		'mute_hi_conga': 62,
+		'open_hi_conga': 63,
+		'low_conga': 64,
+		'high_timbale': 65,
+		'low_timbale': 66,
+		'high_agogo': 67,
+		'low_agogo': 68,
+		'cabasa': 69,
+		'maracas': 70,
+		'short_whistle': 71,
+		'long_whistle': 72,
+		'short_guiro': 73,
+		'long_guiro': 74,
+		'claves': 75,
+		'hi_wood_block': 76,
+		'low_wood_block': 77,
+		'mute_cuica': 78,
+		'open_cuica': 79,
+		'mute_triangle': 80,
+		'open_triangle': 81
+	}
+	if type(name) == str:
+		return drum_dict[name.lower()]
+	elif type(name) == int:
+		if name >= 35 and name <= 81:
+			for key, value in drum_dict.items():
+				if name in value:
+					return key
+		else:
+			raise ValueError(f'{name} is not in range(35, 81), therefor it can\'t be converted into a drum name.')
+	else:
+		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a drum name or midi pitch.')
+
 
 def chords(name):
 	chord_dict = {
