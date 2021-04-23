@@ -79,6 +79,8 @@ third = random.choice(k.list_chords())
 # you need mido to write midi files
 import mido
 
-# you can use a loop on [first, second, third] to push the pitches into mido tracks. Good luck!
+# you can use a loop on [first, second, third] to push the pitches into mido tracks.
+# See https://github.com/cyberrumor/keygen/blob/main/keygen.py for an example implementation. 
+# Good luck!
 
 ```
