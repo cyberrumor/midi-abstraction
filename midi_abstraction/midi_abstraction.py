@@ -12,7 +12,7 @@ def list_modes():
 	]
 
 def universe():
-        return ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
+		return ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
 
 def list_notes():
 	result = []
@@ -74,7 +74,7 @@ def notes(name):
 	else:
 		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a note name or midi pitch.')
 
-def drums(name):
+def drums_dict():
 	drum_dict = {
 		'acoustic_base_drum': 35,
 		'bass_drum_1': 36,
@@ -124,6 +124,10 @@ def drums(name):
 		'mute_triangle': 80,
 		'open_triangle': 81
 	}
+	return drum_dict
+
+def drums(name):
+	drum_dict = drums_dict()
 	if type(name) == str:
 		return drum_dict[name.lower()]
 	elif type(name) == int:
@@ -221,6 +225,57 @@ def chords(name):
 			result.append(notes(i))
 		return result
 
+def relative_chord_dict():
+	chord_dict = {
+			'c_major': 'a_minor',
+			'g_major': 'e_minor',
+			'd_major': 'b_minor',
+			'a_major': 'fs_minor',
+			'e_major': 'cs_minor',
+			'b_major': 'gs_minor',
+			'fs_major': 'ds_minor',
+			'cs_major': 'as_minor',
+			'f_major': 'd_minor',
+			'bb_major': 'g_minor',
+			'eb_major': 'c_minor',
+			'ab_major': 'f_minor',
+			'db_major': 'bb_minor',
+			'gb_major': 'eb_minor',
+			'cb_major': 'ab_minor',
+			'a_minor': 'c_major',
+			'e_minor': 'g_major',
+			'b_minor': 'd_major',
+			'fs_minor': 'a_major',
+			'cs_minor': 'e_major',
+			'gs_minor': 'b_major',
+			'ds_minor': 'fs_major',
+			'as_minor': 'cs_major',
+			'd_minor': 'f_major',
+			'g_minor': 'bb_major',
+			'c_minor': 'eb_major',
+			'f_minor': 'ab_major',
+			'bb_minor': 'db_major',
+			'eb_minor': 'gb_major',
+			'ab_minor': 'cb_major',
+	}
+	return chord_dict
+
+def relative_chord_name(name):
+	chord_dict = relative_chord_dict()
+	if has_relative_chord(name):
+		return chord_dict[name]
+	raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
+
+def has_relative_chord(name):
+	if name in relative_chord_dict().keys():
+		return True
+	return False
+
+def relative_chord(name):
+	if has_relative_chord(name):
+		return chords(relative_chord_name(name))
+	raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
+
 class Key:
 	def __init__(self, name):
 		self.name = name
@@ -256,10 +311,14 @@ class Key:
 			if name[1] == '_':
 				root = universe().index(name[0])
 			elif name[1].lower() == 's':
-				root = universe().index(''.join(name[0:3]))
+				root = universe().index(''.join(name[0:2]))
+			# in universe(), we only have sharps, so we need to convert flats to sharps by
+			# traversing backwards through the index by 1 to get the correct sharp.
 			elif name[1].lower() == 'b':
-				check = universe().index(name[0]) - 1
-				root = universe().index(check)
+				root = universe().index(name[0]) - 1
+				if root == -1:
+					root = 12
+				print(f'root: {root}')
 			else:
 				raise NameError(f'{name} is not a valid musical key.')
 		else:
@@ -321,12 +380,27 @@ class Key:
 			self.notes[slice[index]] = notes(slice[index])
 			index += mode_structures[self.mode][step]
 
+		self.relative_key = relative_chord_name(self.name)
+
 	# RETURNS LISTS
 	def list_notes(self):
 		return [i for i in list(self.notes.keys())]
 
 	def list_chords(self):
 		return [i for i in list(self.chords.keys())]
+
+	# this tries to get a relative chord for each chord in the current key.
+	# excludes dim, sus, or any other chord that I haven't programmed relative
+	# support for yet.
+	def list_relative_chords(self):
+		return [relative_chord_name(i) for i in list(self.chords.keys()) if has_relative_chord(i)]
+
+	# this takes the relative key, and lists all chords in it.
+	def list_chords_in_relative_key(self):
+		if has_relative_chord(self.name):
+			return Key(self.relative_key).list_chords()
+		raise KeyError(f"{self.name} doesn't support relative chords yet.")
+
 
 	def list_notes_in_octave(self, octave):
 		result = []
