@@ -264,7 +264,8 @@ def relative_chord_name(name):
 	chord_dict = relative_chord_dict()
 	if has_relative_chord(name):
 		return chord_dict[name]
-	raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
+	return None
+	# raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
 
 def has_relative_chord(name):
 	if name in relative_chord_dict().keys():
@@ -274,7 +275,8 @@ def has_relative_chord(name):
 def relative_chord(name):
 	if has_relative_chord(name):
 		return chords(relative_chord_name(name))
-	raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
+	return None
+	# raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
 
 class Key:
 	def __init__(self, name):
