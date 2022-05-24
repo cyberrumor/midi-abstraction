@@ -84,3 +84,5 @@ import mido
 # Good luck!
 
 ```
+
+See `testing/test.py` for a list of all available functions, classes, properties, and methods.
