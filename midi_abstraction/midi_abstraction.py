@@ -61,10 +61,10 @@ def notes(name):
 		'gb': [i * 12 + 6 for i in range(0, 11)]
 	}
 
-	if type(name) == str:
+	if isinstance(name, str):
 		return note_dict[name.lower()]
 
-	elif type(name) == int:
+	elif isinstance(name, int):
 		if name <= 127 and name >= 0:
 			for key, value in note_dict.items():
 				if name in value:
@@ -128,9 +128,9 @@ def drums_dict():
 
 def drums(name):
 	drum_dict = drums_dict()
-	if type(name) == str:
+	if isinstance(name, str):
 		return drum_dict[name.lower()]
-	elif type(name) == int:
+	elif isinstance(name, int):
 		if name >= 35 and name <= 81:
 			for key, value in drum_dict.items():
 				if name == value:
@@ -216,7 +216,7 @@ def chords(name):
 		'g_minor_seventh': [notes('g'), notes('bb'), notes('d'), notes('f')]
 
 	}
-	if name in list(chord_dict.keys()):
+	if name in list(chord_dict):
 		return chord_dict[name]
 	else:
 		result = []
@@ -265,10 +265,9 @@ def relative_chord_name(name):
 	if has_relative_chord(name):
 		return chord_dict[name]
 	return None
-	# raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
 
 def has_relative_chord(name):
-	if name in relative_chord_dict().keys():
+	if name in relative_chord_dict():
 		return True
 	return False
 
@@ -276,7 +275,6 @@ def relative_chord(name):
 	if has_relative_chord(name):
 		return chords(relative_chord_name(name))
 	return None
-	# raise KeyError(f'{name} has no relative chord. You can test this with has_relative_chord({name})')
 
 class Key:
 	def __init__(self, name):
@@ -320,7 +318,6 @@ class Key:
 				root = universe().index(name[0]) - 1
 				if root == -1:
 					root = 12
-				print(f'root: {root}')
 			else:
 				raise NameError(f'{name} is not a valid musical key.')
 		else:
@@ -333,30 +330,36 @@ class Key:
 		else:
 			self.mode = name.split('_')[1].lower()
 
-		if self.mode in mode_structures:
-			if self.mode in ['major', 'ionian']:
+		match self.mode:
+			case 'major':
 				numerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'viid']
 				self.seniority = 'major'
-			elif self.mode in ['minor', 'aeolian']:
+			case 'ionian':
+				numerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'viid']
+				self.seniority = 'major'
+			case 'minor':
 				numerals = ['i', 'iid', 'III', 'iv', 'v', 'VI', 'VII']
 				self.seniority = 'minor'
-			elif self.mode == 'dorian':
+			case 'aeolian':
+				numerals = ['i', 'iid', 'III', 'iv', 'v', 'VI', 'VII']
+				self.seniority = 'minor'
+			case 'dorian':
 				numerals = ['i', 'ii', 'III', 'IV', 'v', 'vid', 'VII']
 				self.seniority = 'minor'
-			elif self.mode == 'phrygian':
+			case 'phrygian':
 				numerals = ['i', 'II', 'III', 'iv', 'vd', 'VI', 'vii']
 				self.seniority = 'minor'
-			elif self.mode == 'lydian':
+			case 'lydian':
 				numerals = ['I', 'II', 'iii', 'ivd', 'V', 'vi', 'vii']
 				self.seniority = 'major'
-			elif self.mode == 'mixolydian':
+			case 'mixolydian':
 				numerals = ['I', 'ii', 'iiid', 'IV', 'v', 'vi', 'VII']
 				self.seniority = 'major'
-			elif self.mode == 'locrian':
+			case 'locrian':
 				numerals = ['id', 'II', 'iii', 'iv', 'V', 'VI', 'vii']
 				self.seniority = 'diminished'
-		else:
-			raise NameError(f'{name} is not a valid musical key.')
+			case _:
+				raise NameError(f'{_} is not a valid musical key.')
 
 		slice = universe()[root:]
 		index = 0
@@ -386,16 +389,16 @@ class Key:
 
 	# RETURNS LISTS
 	def list_notes(self):
-		return [i for i in list(self.notes.keys())]
+		return [i for i in list(self.notes)]
 
 	def list_chords(self):
-		return [i for i in list(self.chords.keys())]
+		return [i for i in list(self.chords)]
 
 	# this tries to get a relative chord for each chord in the current key.
 	# excludes dim, sus, or any other chord that I haven't programmed relative
 	# support for yet.
 	def list_relative_chords(self):
-		return [relative_chord_name(i) for i in list(self.chords.keys()) if has_relative_chord(i)]
+		return [relative_chord_name(i) for  i in list(self.chords) if has_relative_chord(i)]
 
 	# this takes the relative key, and lists all chords in it.
 	def list_chords_in_relative_key(self):
@@ -416,11 +419,11 @@ class Key:
 
 	def list_notes_in_pentatonic_major(self):
 		pents = self.notes_in_pentatonic_major()
-		return list(pents.keys())
+		return list(pents)
 
 	def list_notes_in_pentatonic_minor(self):
 		pents = self.notes_in_pentatonic_minor()
-		return list(pents.keys())
+		return list(pents)
 
 	# RETURNS DICTS
 	def chords_in_octave(self, octave):
