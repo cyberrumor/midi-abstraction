@@ -7,6 +7,7 @@ This, combined with a midi file creation package like 'mido', and maybe a little
 
 # Installation
 ```pip install midi_abstraction```
+- requires python 3.10 or newer
 
 # Usage
 
