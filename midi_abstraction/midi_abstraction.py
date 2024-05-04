@@ -1,488 +1,501 @@
 #!/usr/bin/env python3
+from dataclasses import dataclass
+from enum import Enum
 
-def list_modes():
-	return [
-		'ionian',
-		'dorian',
-		'phrygian',
-		'lydian',
-		'mixolydian',
-		'aeolian',
-		'locrian'
-	]
-
-def universe():
-		return ['a', 'as', 'b', 'c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs'] * 2
-
-def list_notes():
-	result = []
-	for i in universe():
-		if i not in result:
-			result.append(i)
-	return result
-
-def list_keys():
-	return [
-		'a_major',
-		'a_minor',
-		'b_major',
-		'b_minor',
-		'c_major',
-		'c_minor',
-		'd_major',
-		'd_minor',
-		'e_major',
-		'e_minor',
-		'f_major',
-		'f_minor',
-		'g_major',
-		'g_minor'
-	]
-
-def notes(name):
-	note_dict = {
-		'as': [i * 12 + 10 for i in range(0, 10)],
-		'a': [i * 12 + 9 for i in range(0, 10)],
-		'b': [i * 12 + 11 for i in range(0, 10)],
-		'cs': [i * 12 + 1 for i in range(0, 11)],
-		'c': [i * 12 for i in range(0, 11)],
-		'ds': [i * 12 + 3 for i in range(0, 11)],
-		'd': [i * 12 + 2 for i in range(0, 11)],
-		'e': [i * 12 + 4 for i in range(0, 11)],
-		'es': [i * 12 + 5 for i in range(0, 11)],
-		'fs': [i * 12 + 6 for i in range(0, 11)],
-		'f': [i * 12 + 5 for i in range(0, 11)],
-		'gs': [i * 12 + 8 for i in range(0, 10)],
-		'g': [i * 12 + 7 for i in range(0, 11)],
-		'ab': [i * 12 + 8 for i in range(0, 10)],
-		'bb': [i * 12 + 10 for i in range(0, 10)],
-		'db': [i * 12 + 1 for i in range(0, 11)],
-		'eb': [i * 12 + 3 for i in range(0, 11)],
-		'gb': [i * 12 + 6 for i in range(0, 11)]
-	}
-
-	if isinstance(name, str):
-		return note_dict[name.lower()]
-
-	elif isinstance(name, int):
-		if name <= 127 and name >= 0:
-			for key, value in note_dict.items():
-				if name in value:
-					return key
-		else:
-			raise ValueError(f'{name} is not in range(0, 127). Therefor, it can\'t be converted into a note name.')
-	else:
-		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a note name or midi pitch.')
-
-def drums_dict():
-	drum_dict = {
-		'acoustic_base_drum': 35,
-		'bass_drum_1': 36,
-		'side_stick': 37,
-		'acoustic_snare': 38,
-		'hand_clap': 39,
-		'electric_snare': 40,
-		'low_floor_tom': 41,
-		'closed_hi_hat': 42,
-		'high_floor_tom': 43,
-		'pedal_hi_hat': 44,
-		'low_tom': 45,
-		'open_hi_hat': 46,
-		'low_mid_tom': 47,
-		'hi_mid_tom': 48,
-		'crash_cymbal_1': 49,
-		'high_tom': 50,
-		'ride_cymbal_1': 51,
-		'chinese_cymbal': 52,
-		'ride_bell': 53,
-		'tambourine': 54,
-		'splash_cymbal': 55,
-		'cowbell': 56,
-		'crash_cymbal_2': 57,
-		'vibraslap': 58,
-		'ride_cymbal_2': 59,
-		'hi_bongo': 60,
-		'low_bongo': 61,
-		'mute_hi_conga': 62,
-		'open_hi_conga': 63,
-		'low_conga': 64,
-		'high_timbale': 65,
-		'low_timbale': 66,
-		'high_agogo': 67,
-		'low_agogo': 68,
-		'cabasa': 69,
-		'maracas': 70,
-		'short_whistle': 71,
-		'long_whistle': 72,
-		'short_guiro': 73,
-		'long_guiro': 74,
-		'claves': 75,
-		'hi_wood_block': 76,
-		'low_wood_block': 77,
-		'mute_cuica': 78,
-		'open_cuica': 79,
-		'mute_triangle': 80,
-		'open_triangle': 81
-	}
-	return drum_dict
-
-def drums(name):
-	drum_dict = drums_dict()
-	if isinstance(name, str):
-		return drum_dict[name.lower()]
-	elif isinstance(name, int):
-		if name >= 35 and name <= 81:
-			for key, value in drum_dict.items():
-				if name == value:
-					return key
-		else:
-			raise ValueError(f'{name} is not in range(35, 81), therefor it can\'t be converted into a drum name.')
-	else:
-		raise TypeError(f'{name} is not a type of int or str, so it can\'t be converted into a drum name or midi pitch.')
+VELOCITY_MIN = 0
+VELOCITY_MAX = 127
 
 
-def chords(name):
-	chord_dict = {
-		'a_minor': [notes('a'), notes('c'), notes('e')],
-		'a_minor_seventh': [notes('a'), notes('c'), notes('e'), notes('g')],
-		'as_dim': [notes('as'), notes('cs'), notes('e')],
-		'as_minor_seventh_flat_five': [notes('as'), notes('cs'), notes('e'), notes('gs')],
-		'as_major': [notes('as'), notes('d'), notes('f')],
-		'as_minor': [notes('as'), notes('cs'), notes('es')],
-		'a_major': [notes('a'), notes('cs'), notes('e')],
-		'a_dim': [notes('a'), notes('c'), notes('eb')],
-		'a_major_seventh': [notes('a'), notes('cs'), notes('e'), notes('gs')],
-		'a_dom_seventh': [notes('a'), notes('cs'), notes('e'), notes('g')],
-		'ab_major': [notes('ab'), notes('c'), notes('eb')],
-		'ab_major_seventh': [notes('ab'), notes('c'), notes('eb'), notes('g')],
-		'bb_major_seventh': [notes('bb'), notes('d'), notes('f'), notes('a')],
-		'bb_major': [notes('bb'), notes('d'), notes('f')],
-		'bb_dom_seventh': [notes('bb'), notes('d'), notes('f'), notes('ab')],
-		'b_dim': [notes('b'), notes('d'), notes('f')],
-		'b_minor_seventh_flat_five': [notes('b'), notes('d'), notes('f'), notes('a')],
-		'b_major': [notes('b'), notes('ds'), notes('fs')],
-		'b_major_seventh': [notes('b'), notes('ds'), notes('fs'), notes('as')],
-		'b_minor': [notes('b'), notes('d'), notes('fs')],
-		'b_minor_seventh': [notes('b'), notes('d'), notes('fs'), notes('a')],
-		'cs_dim': [notes('cs'), notes('e'), notes('g')],
-		'cs_major': [notes('cs'), notes('f'), notes('g')],
-		'cs_minor_seventh_flat_five': [notes('cs'), notes('e'), notes('g'), notes('b')],
-		'cs_minor': [notes('cs'), notes('e'), notes('gs')],
-		'cs_minor_seventh': [notes('cs'), notes('e'), notes('gs'), notes('b')],
-		'c_major': [notes('c'), notes('e'), notes('g')],
-		'c_dim': [notes('c'), notes('eb'), notes('gb')],
-		'c_major_seventh': [notes('c'), notes('e'), notes('g'), notes('b')],
-		'c_minor': [notes('c'), notes('eb'), notes('g')],
-		'c_minor_seventh': [notes('c'), notes('eb'), notes('g'), notes('bb')],
-		'c_dom_seventh': [notes('c'), notes('e'), notes('g'), notes('bb')],
-		'ds_major': [notes('ds'), notes('g'), notes('as')],
-		'ds_dim': [notes('ds'), notes('fs'), notes('a')],
-		'ds_minor': [notes('ds'), notes('fs'), notes('as')],
-		'ds_minor_seventh': [notes('ds'), notes('fs'), notes('as'), notes('cs')],
-		'd_major': [notes('d'), notes('fs'), notes('a')],
-		'd_major_seventh': [notes('d'), notes('fs'), notes('a'), notes('cs')],
-		'd_minor': [notes('d'), notes('f'), notes('a')],
-		'd_minor_seventh': [notes('d'), notes('f'), notes('a'), notes('c')],
-		'd_dim': [notes('d'), notes('f'), notes('ab')],
-		'd_minor_seventh_flat_five': [notes('d'), notes('f'), notes('ab'), notes('c')],
-		'e_major': [notes('e'), notes('gs'), notes('b')],
-		'e_major_seventh': [notes('e'), notes('gs'), notes('b'), notes('ds')],
-		'e_dom_seventh': [notes('e'), notes('gs'), notes('b'), notes('d')],
-		'e_minor': [notes('e'), notes('g'), notes('b')],
-		'e_minor_seventh': [notes('e'), notes('g'), notes('b'), notes('d')],
-		'eb_major': [notes('eb'), notes('g'), notes('bb')],
-		'eb_major_seventh': [notes('eb'), notes('g'), notes('bb'), notes('d')],
-		'e_dim': [notes('e'), notes('g'), notes('bb')],
-		'e_minor_seventh_flat_five': [notes('e'), notes('g'), notes('bb'), notes('d')],
-		'fs_minor': [notes('fs'), notes('a'), notes('cs')],
-		'fs_minor_seventh': [notes('fs'), notes('a'), notes('cs'), notes('e')],
-		'f_major': [notes('f'), notes('a'), notes('c')],
-		'f_dim': [notes('f'), notes('ab'), notes('b')],
-		'f_major_seventh': [notes('f'), notes('a'), notes('c'), notes('e')],
-		'fs_major': [notes('fs'), notes('as'), notes('cs')],
-		'fs_dim': [notes('fs'), notes('a'), notes('c')],
-		'fs_dom_seventh': [notes('fs'), notes('as'), notes('cs'), notes('e')],
-		'f_minor': [notes('f'), notes('ab'), notes('c')],
-		'gs_major': [notes('gs'), notes('c'), notes('ds')],
-		'gs_minor': [notes('gs'), notes('b'), notes('ds')],
-		'gs_minor_seventh': [notes('gs'), notes('b'), notes('ds'), notes('fs')],
-		'gs_dim': [notes('gs'), notes('b'), notes('d')],
-		'gs_minor_seventh_flat_five': [notes('gs'), notes('b'), notes('d'), notes('fs')],
-		'g_major': [notes('g'), notes('b'), notes('d')],
-		'g_dim': [notes('g'), notes('bb'), notes('db')],
-		'g_dom_seventh': [notes('g'), notes('b'), notes('d'), notes('f')],
-		'g_major_seventh': [notes('g'), notes('b'), notes('d'), notes('fs')],
-		'g_minor': [notes('g'), notes('bb'), notes('d')],
-		'g_minor_seventh': [notes('g'), notes('bb'), notes('d'), notes('f')]
+class Note(str, Enum):
+    C = "c"
+    CS = "cs"
+    DB = "db"
+    D = "d"
+    DS = "ds"
+    EB = "eb"
+    E = "e"
+    ES = "es"
+    F = "f"
+    FS = "fs"
+    GB = "gb"
+    G = "g"
+    GS = "gs"
+    AB = "ab"
+    A = "a"
+    AS = "as"
+    BB = "bb"
+    B = "b"
 
-	}
-	if name in list(chord_dict):
-		return chord_dict[name]
-	else:
-		result = []
-		makeshift_name = name.split('_')
-		for i in makeshift_name:
-			result.append(notes(i))
-		return result
 
-def relative_chord_dict():
-	chord_dict = {
-			'c_major': 'a_minor',
-			'g_major': 'e_minor',
-			'd_major': 'b_minor',
-			'a_major': 'fs_minor',
-			'e_major': 'cs_minor',
-			'b_major': 'gs_minor',
-			'fs_major': 'ds_minor',
-			'cs_major': 'as_minor',
-			'f_major': 'd_minor',
-			'bb_major': 'g_minor',
-			'eb_major': 'c_minor',
-			'ab_major': 'f_minor',
-			'db_major': 'bb_minor',
-			'gb_major': 'eb_minor',
-			'cb_major': 'ab_minor',
-			'a_minor': 'c_major',
-			'e_minor': 'g_major',
-			'b_minor': 'd_major',
-			'fs_minor': 'a_major',
-			'cs_minor': 'e_major',
-			'gs_minor': 'b_major',
-			'ds_minor': 'fs_major',
-			'as_minor': 'cs_major',
-			'd_minor': 'f_major',
-			'g_minor': 'bb_major',
-			'c_minor': 'eb_major',
-			'f_minor': 'ab_major',
-			'bb_minor': 'db_major',
-			'eb_minor': 'gb_major',
-			'ab_minor': 'cb_major',
-	}
-	return chord_dict
+NOTES = {
+    Note.C: [i * 12 for i in range(0, 11)],
+    Note.CS: [i * 12 + 1 for i in range(0, 11)],
+    Note.DB: [i * 12 + 1 for i in range(0, 11)],
+    Note.D: [i * 12 + 2 for i in range(0, 11)],
+    Note.DS: [i * 12 + 3 for i in range(0, 11)],
+    Note.EB: [i * 12 + 3 for i in range(0, 11)],
+    Note.E: [i * 12 + 4 for i in range(0, 11)],
+    Note.F: [i * 12 + 5 for i in range(0, 11)],
+    Note.FS: [i * 12 + 6 for i in range(0, 11)],
+    Note.GB: [i * 12 + 6 for i in range(0, 11)],
+    Note.G: [i * 12 + 7 for i in range(0, 11)],
+    Note.GS: [i * 12 + 8 for i in range(0, 9)],
+    Note.AB: [i * 12 + 8 for i in range(0, 9)],
+    Note.A: [i * 12 + 9 for i in range(0, 9)],
+    Note.AS: [i * 12 + 10 for i in range(0, 9)],
+    Note.BB: [i * 12 + 10 for i in range(0, 9)],
+    Note.B: [i * 12 + 11 for i in range(0, 9)],
+}
 
-def relative_chord_name(name):
-	chord_dict = relative_chord_dict()
-	if has_relative_chord(name):
-		return chord_dict[name]
-	return None
 
-def has_relative_chord(name):
-	if name in relative_chord_dict():
-		return True
-	return False
+class Chord(str, Enum):
+    AB_MINOR = "ab_minor"
+    AB_DIM = "ab_dim"
+    A_MINOR = "a_minor"
+    A_MINOR_SEVENTH = "a_minor_seventh"
+    AS_DIM = "as_dim"
+    AS_MINOR_SEVENTH_FLAT_FIVE = "as_minor_seventh_flat_five"
+    AS_MAJOR = "as_major"
+    AS_MINOR = "as_minor"
+    A_MAJOR = "a_major"
+    A_DIM = "a_dim"
+    A_MAJOR_SEVENTH = "a_major_seventh"
+    A_DOM_SEVENTH = "a_dom_seventh"
+    AB_MAJOR = "ab_major"
+    AB_MAJOR_SEVENTH = "ab_major_seventh"
+    BB_MINOR = "bb_minor"
+    BB_DIM = "bb_dim"
+    BB_MAJOR_SEVENTH = "bb_major_seventh"
+    BB_MAJOR = "bb_major"
+    BB_DOM_SEVENTH = "bb_dom_seventh"
+    B_DIM = "b_dim"
+    B_MINOR_SEVENTH_FLAT_FIVE = "b_minor_seventh_flat_five"
+    B_MAJOR = "b_major"
+    B_MAJOR_SEVENTH = "b_major_seventh"
+    B_MINOR = "b_minor"
+    B_MINOR_SEVENTH = "b_minor_seventh"
+    CS_DIM = "cs_dim"
+    CS_MAJOR = "cs_major"
+    CS_MINOR_SEVENTH_FLAT_FIVE = "cs_minor_seventh_flat_five"
+    CS_MINOR = "cs_minor"
+    CS_MINOR_SEVENTH = "cs_minor_seventh"
+    C_MAJOR = "c_major"
+    C_DIM = "c_dim"
+    C_MAJOR_SEVENTH = "c_major_seventh"
+    C_MINOR = "c_minor"
+    C_MINOR_SEVENTH = "c_minor_seventh"
+    C_DOM_SEVENTH = "c_dom_seventh"
+    DB_DIM = "db_dim"
+    DB_MAJOR = "db_major"
+    DS_MAJOR = "ds_major"
+    DS_DIM = "ds_dim"
+    DS_MINOR = "ds_minor"
+    DS_MINOR_SEVENTH = "ds_minor_seventh"
+    D_MAJOR = "d_major"
+    D_MAJOR_SEVENTH = "d_major_seventh"
+    D_MINOR = "d_minor"
+    D_MINOR_SEVENTH = "d_minor_seventh"
+    D_DIM = "d_dim"
+    D_MINOR_SEVENTH_FLAT_FIVE = "d_minor_seventh_flat_five"
+    DB_MINOR = "db_minor"
+    E_MAJOR = "e_major"
+    E_MAJOR_SEVENTH = "e_major_seventh"
+    E_DOM_SEVENTH = "e_dom_seventh"
+    E_MINOR = "e_minor"
+    E_MINOR_SEVENTH = "e_minor_seventh"
+    EB_MAJOR = "eb_major"
+    EB_MAJOR_SEVENTH = "eb_major_seventh"
+    EB_MINOR = "eb_minor"
+    EB_DIM = "eb_dim"
+    E_DIM = "e_dim"
+    E_MINOR_SEVENTH_FLAT_FIVE = "e_minor_seventh_flat_five"
+    FS_MINOR = "fs_minor"
+    FS_MINOR_SEVENTH = "fs_minor_seventh"
+    F_MAJOR = "f_major"
+    F_DIM = "f_dim"
+    F_MAJOR_SEVENTH = "f_major_seventh"
+    FS_MAJOR = "fs_major"
+    FS_DIM = "fs_dim"
+    FS_DOM_SEVENTH = "fs_dom_seventh"
+    F_MINOR = "f_minor"
+    GB_MAJOR = "gb_major"
+    GB_DIM = "gb_dim"
+    GB_MINOR = "gb_minor"
+    GS_MAJOR = "gs_major"
+    GS_MINOR = "gs_minor"
+    GS_MINOR_SEVENTH = "gs_minor_seventh"
+    GS_DIM = "gs_dim"
+    GS_MINOR_SEVENTH_FLAT_FIVE = "gs_minor_seventh_flat_five"
+    G_MAJOR = "g_major"
+    G_DIM = "g_dim"
+    G_DOM_SEVENTH = "g_dom_seventh"
+    G_MAJOR_SEVENTH = "g_major_seventh"
+    G_MINOR = "g_minor"
+    G_MINOR_SEVENTH = "g_minor_seventh"
 
-def relative_chord(name):
-	if has_relative_chord(name):
-		return chords(relative_chord_name(name))
-	return None
 
+CHORDS = {
+    Chord.AB_MINOR: [Note.AB, Note.B, Note.EB],
+    Chord.AB_DIM: [Note.AB, Note.B, Note.D],
+    Chord.A_MINOR: [Note.A, Note.C, Note.E],
+    Chord.A_MINOR_SEVENTH: [Note.A, Note.C, Note.E, Note.G],
+    Chord.AS_DIM: [Note.AS, Note.CS, Note.E],
+    Chord.AS_MINOR_SEVENTH_FLAT_FIVE: [Note.AS, Note.CS, Note.E, Note.GS],
+    Chord.AS_MAJOR: [Note.AS, Note.D, Note.F],
+    Chord.AS_MINOR: [Note.AS, Note.CS, Note.F],
+    Chord.A_MAJOR: [Note.A, Note.CS, Note.E],
+    Chord.A_DIM: [Note.A, Note.C, Note.EB],
+    Chord.A_MAJOR_SEVENTH: [Note.A, Note.CS, Note.E, Note.GS],
+    Chord.A_DOM_SEVENTH: [Note.A, Note.CS, Note.E, Note.G],
+    Chord.AB_MAJOR: [Note.AB, Note.C, Note.EB],
+    Chord.AB_MAJOR_SEVENTH: [Note.AB, Note.C, Note.EB, Note.G],
+    Chord.BB_MINOR: [Note.BB, Note.DB, Note.F],
+    Chord.BB_DIM: [Note.BB, Note.DB, Note.G],
+    Chord.BB_MAJOR_SEVENTH: [Note.BB, Note.D, Note.F, Note.A],
+    Chord.BB_MAJOR: [Note.BB, Note.D, Note.F],
+    Chord.BB_DOM_SEVENTH: [Note.BB, Note.D, Note.F, Note.AB],
+    Chord.B_DIM: [Note.B, Note.D, Note.F],
+    Chord.B_MINOR_SEVENTH_FLAT_FIVE: [Note.B, Note.D, Note.F, Note.A],
+    Chord.B_MAJOR: [Note.B, Note.DS, Note.FS],
+    Chord.B_MAJOR_SEVENTH: [Note.B, Note.DS, Note.FS, Note.AS],
+    Chord.B_MINOR: [Note.B, Note.D, Note.FS],
+    Chord.B_MINOR_SEVENTH: [Note.B, Note.D, Note.FS, Note.A],
+    Chord.CS_DIM: [Note.CS, Note.E, Note.G],
+    Chord.CS_MAJOR: [Note.CS, Note.F, Note.G],
+    Chord.CS_MINOR_SEVENTH_FLAT_FIVE: [Note.CS, Note.E, Note.G, Note.B],
+    Chord.CS_MINOR: [Note.CS, Note.E, Note.GS],
+    Chord.CS_MINOR_SEVENTH: [Note.CS, Note.E, Note.GS, Note.B],
+    Chord.C_MAJOR: [Note.C, Note.E, Note.G],
+    Chord.C_DIM: [Note.C, Note.EB, Note.GB],
+    Chord.C_MAJOR_SEVENTH: [Note.C, Note.E, Note.G, Note.B],
+    Chord.C_MINOR: [Note.C, Note.EB, Note.G],
+    Chord.C_MINOR_SEVENTH: [Note.C, Note.EB, Note.G, Note.BB],
+    Chord.C_DOM_SEVENTH: [Note.C, Note.E, Note.G, Note.BB],
+    Chord.DB_DIM: [Note.DB, Note.E, Note.GS],
+    Chord.DB_MINOR: [Note.DB, Note.E, Note.AB],
+    Chord.DB_MAJOR: [Note.DB, Note.F, Note.AB],
+    Chord.DS_MAJOR: [Note.DS, Note.G, Note.AS],
+    Chord.DS_DIM: [Note.DS, Note.FS, Note.A],
+    Chord.DS_MINOR: [Note.DS, Note.FS, Note.AS],
+    Chord.DS_MINOR_SEVENTH: [Note.DS, Note.FS, Note.AS, Note.CS],
+    Chord.D_MAJOR: [Note.D, Note.FS, Note.A],
+    Chord.D_MAJOR_SEVENTH: [Note.D, Note.FS, Note.A, Note.CS],
+    Chord.D_MINOR: [Note.D, Note.F, Note.A],
+    Chord.D_MINOR_SEVENTH: [Note.D, Note.F, Note.A, Note.C],
+    Chord.D_DIM: [Note.D, Note.F, Note.AB],
+    Chord.D_MINOR_SEVENTH_FLAT_FIVE: [Note.D, Note.F, Note.AB, Note.C],
+    Chord.E_MAJOR: [Note.E, Note.GS, Note.B],
+    Chord.E_MAJOR_SEVENTH: [Note.E, Note.GS, Note.B, Note.DS],
+    Chord.E_DOM_SEVENTH: [Note.E, Note.GS, Note.B, Note.D],
+    Chord.E_MINOR: [Note.E, Note.G, Note.B],
+    Chord.E_MINOR_SEVENTH: [Note.E, Note.G, Note.B, Note.D],
+    Chord.EB_MAJOR: [Note.EB, Note.G, Note.BB],
+    Chord.EB_MAJOR_SEVENTH: [Note.EB, Note.G, Note.BB, Note.D],
+    Chord.EB_MINOR: [Note.EB, Note.GB, Note.BB],
+    Chord.EB_DIM: [Note.EB, Note.GB, Note.A],
+    Chord.E_DIM: [Note.E, Note.G, Note.BB],
+    Chord.E_MINOR_SEVENTH_FLAT_FIVE: [Note.E, Note.G, Note.BB, Note.D],
+    Chord.FS_MINOR: [Note.FS, Note.A, Note.CS],
+    Chord.FS_MINOR_SEVENTH: [Note.FS, Note.A, Note.CS, Note.E],
+    Chord.F_MAJOR: [Note.F, Note.A, Note.C],
+    Chord.F_DIM: [Note.F, Note.AB, Note.B],
+    Chord.F_MAJOR_SEVENTH: [Note.F, Note.A, Note.C, Note.E],
+    Chord.FS_MAJOR: [Note.FS, Note.AS, Note.CS],
+    Chord.FS_DIM: [Note.FS, Note.A, Note.C],
+    Chord.FS_DOM_SEVENTH: [Note.FS, Note.AS, Note.CS, Note.E],
+    Chord.F_MINOR: [Note.F, Note.AB, Note.C],
+    Chord.GB_MAJOR: [Note.GB, Note.BB, Note.DB],
+    Chord.GB_MINOR: [Note.GB, Note.A, Note.DB],
+    Chord.GB_DIM: [Note.GB, Note.BB, Note.DB],
+    Chord.GS_MAJOR: [Note.GS, Note.C, Note.DS],
+    Chord.GS_MINOR: [Note.GS, Note.B, Note.DS],
+    Chord.GS_MINOR_SEVENTH: [Note.GS, Note.B, Note.DS, Note.FS],
+    Chord.GS_DIM: [Note.GS, Note.B, Note.D],
+    Chord.GS_MINOR_SEVENTH_FLAT_FIVE: [Note.GS, Note.B, Note.D, Note.FS],
+    Chord.G_MAJOR: [Note.G, Note.B, Note.D],
+    Chord.G_DIM: [Note.G, Note.BB, Note.DB],
+    Chord.G_DOM_SEVENTH: [Note.G, Note.B, Note.D, Note.F],
+    Chord.G_MAJOR_SEVENTH: [Note.G, Note.B, Note.D, Note.FS],
+    Chord.G_MINOR: [Note.G, Note.BB, Note.D],
+    Chord.G_MINOR_SEVENTH: [Note.G, Note.BB, Note.D, Note.F],
+}
+
+
+RELATIVE_CHORD = {
+    Chord.C_MAJOR: Chord.A_MINOR,
+    Chord.G_MAJOR: Chord.E_MINOR,
+    Chord.D_MAJOR: Chord.B_MINOR,
+    Chord.A_MAJOR: Chord.FS_MINOR,
+    Chord.E_MAJOR: Chord.CS_MINOR,
+    Chord.B_MAJOR: Chord.GS_MINOR,
+    Chord.FS_MAJOR: Chord.DS_MINOR,
+    Chord.CS_MAJOR: Chord.AS_MINOR,
+    Chord.F_MAJOR: Chord.D_MINOR,
+    Chord.BB_MAJOR: Chord.G_MINOR,
+    Chord.EB_MAJOR: Chord.C_MINOR,
+    Chord.AB_MAJOR: Chord.F_MINOR,
+    Chord.DB_MAJOR: Chord.BB_MINOR,
+    Chord.GB_MAJOR: Chord.EB_MINOR,
+    Chord.B_MAJOR: Chord.AB_MINOR,
+    Chord.A_MINOR: Chord.C_MAJOR,
+    Chord.E_MINOR: Chord.G_MAJOR,
+    Chord.B_MINOR: Chord.D_MAJOR,
+    Chord.FS_MINOR: Chord.A_MAJOR,
+    Chord.CS_MINOR: Chord.E_MAJOR,
+    Chord.GS_MINOR: Chord.B_MAJOR,
+    Chord.DS_MINOR: Chord.FS_MAJOR,
+    Chord.AS_MINOR: Chord.CS_MAJOR,
+    Chord.D_MINOR: Chord.F_MAJOR,
+    Chord.G_MINOR: Chord.BB_MAJOR,
+    Chord.C_MINOR: Chord.EB_MAJOR,
+    Chord.F_MINOR: Chord.AB_MAJOR,
+    Chord.BB_MINOR: Chord.DB_MAJOR,
+    Chord.EB_MINOR: Chord.GB_MAJOR,
+    Chord.AB_MINOR: Chord.B_MAJOR,
+}
+
+
+class Drum(int, Enum):
+    ACOUSTIC_BASE_DRUM = 35
+    BASS_DRUM_1 = 36
+    SIDE_STICK = 37
+    ACOUSTIC_SNARE = 38
+    HAND_CLAP = 39
+    ELECTRIC_SNARE = 40
+    LOW_FLOOR_TOM = 41
+    CLOSED_HI_HAT = 42
+    HIGH_FLOOR_TOM = 43
+    PEDAL_HI_HAT = 44
+    LOW_TOM = 45
+    OPEN_HI_HAT = 46
+    LOW_MID_TOM = 47
+    HI_MID_TOM = 48
+    CRASH_CYMBAL_1 = 49
+    HIGH_TOM = 50
+    RIDE_CYMBAL_1 = 51
+    CHINESE_CYMBAL = 52
+    RIDE_BELL = 53
+    TAMBOURINE = 54
+    SPLASH_CYMBAL = 55
+    COWBELL = 56
+    CRASH_CYMBAL_2 = 57
+    VIBRASLAP = 58
+    RIDE_CYMBAL_2 = 59
+    HI_BONGO = 60
+    LOW_BONGO = 61
+    MUTE_HI_CONGA = 62
+    OPEN_HI_CONGA = 63
+    LOW_CONGA = 64
+    HIGH_TIMBALE = 65
+    LOW_TIMBALE = 66
+    HIGH_AGOGO = 67
+    LOW_AGOGO = 68
+    CABASA = 69
+    MARACAS = 70
+    SHORT_WHISTLE = 71
+    LONG_WHISTLE = 72
+    SHORT_GUIRO = 73
+    LONG_GUIRO = 74
+    CLAVES = 75
+    HI_WOOD_BLOCK = 76
+    LOW_WOOD_BLOCK = 77
+    MUTE_CUICA = 78
+    OPEN_CUICA = 79
+    MUTE_TRIANGLE = 80
+    OPEN_TRIANGLE = 81
+
+
+SCALE = [
+    {Note.C},
+    {Note.CS, Note.DB},
+    {Note.D},
+    {Note.DS, Note.EB},
+    {Note.E},
+    {Note.F},
+    {Note.FS, Note.GB},
+    {Note.G},
+    {Note.GS, Note.AB},
+    {Note.A},
+    {Note.AS, Note.BB},
+    {Note.B},
+]
+
+
+class Step(int, Enum):
+    H = 1
+    W = 2
+
+
+class Seniority(str, Enum):
+    MAJOR = "major"
+    MINOR = "minor"
+    DIMINISHED = "diminished"
+
+
+class Mode(str, Enum):
+    IONIAN = "ionian"
+    DORIAN = "dorian"
+    PHRYGIAN = "phrygian"
+    LYDIAN = "lydian"
+    MIXOLYDIAN = "mixolydian"
+    AEOLIAN = "aeolian"
+    LOCRIAN = "locrian"
+    MAJOR = "major"
+    MINOR = "minor"
+
+
+class Note(str, Enum):
+    C = "c"
+    CS = "cs"
+    DB = "db"
+    D = "d"
+    DS = "ds"
+    EB = "eb"
+    E = "e"
+    F = "f"
+    FS = "fs"
+    GB = "gb"
+    G = "g"
+    GS = "gs"
+    AB = "ab"
+    A = "a"
+    AS = "as"
+    BB = "bb"
+    B = "b"
+
+
+@dataclass(frozen=True, kw_only=True)
 class Key:
-	def __init__(self, name):
-		self.name = name
+    mode: Mode
+    steps: list[Step]
+    numerals: list[str]
+    seniority: Seniority
 
-		W = 2
-		H = 1
+    def chords(self, note: Note) -> list[set[Chord]]:
+        """
+        Return a list of sets, where each set holds enharmonic equivalent names of
+        chords appropriate for the mode of the given note. These are sorted by
+        scale degrees, so the result can be indexed with 0-6 to get degrees 1-7.
+        """
+        # Translate bogus notes into real ones.
+        note = {
+            "es": Note.F,
+            "fb": Note.E,
+            "cb": Note.B,
+            "bs": Note.C,
+        }.get(note, note)
 
-		default_mode = [W, W, H, W, W, W, H]
+        for degree in range(len(SCALE)):
+            if note in SCALE[degree]:
+                break
 
-		locrian = [default_mode[6]] + default_mode[0:6]
-		mixolydian = default_mode[4:] + default_mode[0:4]
-		lydian = default_mode[3:] + default_mode[0:3]
-		phrygian = default_mode[2:] + default_mode[0:2]
-		dorian = default_mode[1:] + [default_mode[0]]
-		ionian = default_mode
-		aeolian = default_mode[5:] + default_mode[0:5]
-		major = default_mode
-		minor = aeolian
+        results = []
+        for i, step in enumerate(self.steps):
+            if degree >= len(SCALE):
+                degree -= 12
 
-		mode_structures = {
-				'ionian': ionian,
-				'dorian': dorian,
-				'phrygian': phrygian,
-				'lydian': lydian,
-				'mixolydian': mixolydian,
-				'aeolian': aeolian,
-				'locrian': locrian,
-				'major': major,
-				'minor': minor
-		}
+            numeral = self.numerals[i]
 
-		if name[0].lower() in universe():
-			if name[1] == '_':
-				root = universe().index(name[0])
-			elif name[1].lower() == 's':
-				root = universe().index(''.join(name[0:2]))
-			# in universe(), we only have sharps, so we need to convert flats to sharps by
-			# traversing backwards through the index by 1 to get the correct sharp.
-			elif name[1].lower() == 'b':
-				root = universe().index(name[0]) - 1
-				if root == -1:
-					root = 12
-			else:
-				raise NameError(f'{name} is not a valid musical key.')
-		else:
-			raise NameError(f'{name} is not a valid musical key.')
+            if numeral.isupper():
+                if "d" in numeral:
+                    result = {Chord(f"{n.value}_major_dim") for n in SCALE[degree]}
+                else:
+                    result = {Chord(f"{n.value}_major") for n in SCALE[degree]}
+            else:
+                if "d" in numeral:
+                    result = {Chord(f"{n.value}_dim") for n in SCALE[degree]}
+                else:
+                    result = {Chord(f"{n.value}_minor") for n in SCALE[degree]}
 
-		if name.split('_')[1].lower() == 'major':
-			self.mode = 'ionian'
-		elif name.split('_')[1].lower() == 'minor':
-			self.mode = 'aeolian'
-		else:
-			self.mode = name.split('_')[1].lower()
+            results.append(result)
+            degree += step
 
-		match self.mode:
-			case 'major':
-				numerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'viid']
-				self.seniority = 'major'
-			case 'ionian':
-				numerals = ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'viid']
-				self.seniority = 'major'
-			case 'minor':
-				numerals = ['i', 'iid', 'III', 'iv', 'v', 'VI', 'VII']
-				self.seniority = 'minor'
-			case 'aeolian':
-				numerals = ['i', 'iid', 'III', 'iv', 'v', 'VI', 'VII']
-				self.seniority = 'minor'
-			case 'dorian':
-				numerals = ['i', 'ii', 'III', 'IV', 'v', 'vid', 'VII']
-				self.seniority = 'minor'
-			case 'phrygian':
-				numerals = ['i', 'II', 'III', 'iv', 'vd', 'VI', 'vii']
-				self.seniority = 'minor'
-			case 'lydian':
-				numerals = ['I', 'II', 'iii', 'ivd', 'V', 'vi', 'vii']
-				self.seniority = 'major'
-			case 'mixolydian':
-				numerals = ['I', 'ii', 'iiid', 'IV', 'v', 'vi', 'VII']
-				self.seniority = 'major'
-			case 'locrian':
-				numerals = ['id', 'II', 'iii', 'iv', 'V', 'VI', 'vii']
-				self.seniority = 'diminished'
-			case _:
-				raise NameError(f'{_} is not a valid musical key.')
+        return results
 
-		slice = universe()[root:]
-		index = 0
-		self.chords = {}
-		for step in range(len(mode_structures[self.mode])):
-			if numerals[step].isupper() and 'd' not in numerals[step]:
-				c = slice[index] + '_major'
-			elif numerals[step].isupper() and 'd' in numerals[step]:
-				c = slice[index] + '_major_dim'
-			elif numerals[step].islower() and 'd' not in numerals[step]:
-				c = slice[index] + '_minor'
-			elif numerals[step].islower() and 'd' in numerals[step]:
-				c = slice[index] + '_dim'
-			else:
-				raise NameError(f'{slice[index]} could not be made into a chord.')
+    def notes(self, note: Note) -> list[set[Note]]:
+        # Translate bogus notes into real ones.
+        note = {
+            "es": Note.F,
+            "fb": Note.E,
+            "cb": Note.B,
+            "bs": Note.C,
+        }.get(note, note)
 
-			self.chords[c] = chords(c)
-			index += mode_structures[self.mode][step]
+        for degree in range(len(SCALE)):
+            if note in SCALE[degree]:
+                break
 
-		index = 0
-		self.notes = {}
-		for step in range(len(mode_structures[self.mode])):
-			self.notes[slice[index]] = notes(slice[index])
-			index += mode_structures[self.mode][step]
+        results = []
+        for i, step in enumerate(self.steps):
+            if degree >= len(SCALE):
+                degree -= 12
 
-		self.relative_key = relative_chord_name(self.name)
+            results.append({n.value for n in SCALE[degree]})
 
-	# RETURNS LISTS
-	def list_notes(self):
-		return [i for i in list(self.notes)]
+            degree += step
 
-	def list_chords(self):
-		return [i for i in list(self.chords)]
-
-	# this tries to get a relative chord for each chord in the current key.
-	# excludes dim, sus, or any other chord that I haven't programmed relative
-	# support for yet.
-	def list_relative_chords(self):
-		return [relative_chord_name(i) for  i in list(self.chords) if has_relative_chord(i)]
-
-	# this takes the relative key, and lists all chords in it.
-	def list_chords_in_relative_key(self):
-		if has_relative_chord(self.name):
-			return Key(self.relative_key).list_chords()
-		raise KeyError(f"{self.name} doesn't support relative chords yet.")
+        return results
 
 
-	def list_notes_in_octave(self, octave):
-		result = []
-		self_notes = self.list_notes()
-		for c in self_notes:
-			if notes(c)[octave] < notes(self_notes[0])[octave]:
-				result.append(notes(c)[octave + 1])
-			else:
-				result.append(notes(c)[octave])
-		return result
+IONIAN = Key(
+    mode=Mode.IONIAN,
+    steps=[Step.W, Step.W, Step.H, Step.W, Step.W, Step.W, Step.H],
+    numerals=["I", "ii", "iii", "IV", "V", "vi", "viid"],
+    seniority=Seniority.MAJOR,
+)
 
-	def list_notes_in_pentatonic_major(self):
-		pents = self.notes_in_pentatonic_major()
-		return list(pents)
+MAJOR = Key(
+    mode=Mode.MAJOR,
+    steps=[Step.W, Step.W, Step.H, Step.W, Step.W, Step.W, Step.H],
+    numerals=["I", "ii", "iii", "IV", "V", "vi", "viid"],
+    seniority=Seniority.MAJOR,
+)
 
-	def list_notes_in_pentatonic_minor(self):
-		pents = self.notes_in_pentatonic_minor()
-		return list(pents)
+DORIAN = Key(
+    mode=Mode.DORIAN,
+    steps=[Step.W, Step.H, Step.W, Step.W, Step.W, Step.H, Step.W],
+    numerals=["i", "ii", "III", "IV", "v", "vid", "VII"],
+    seniority=Seniority.MINOR,
+)
 
-	# RETURNS DICTS
-	def chords_in_octave(self, octave):
-		new_dict = {}
-		for key, value in self.chords.items():
-			new_dict[key] = [i[octave] for i in self.chords[key]]
-		return new_dict
+PHRYGIAN = Key(
+    mode=Mode.PHRYGIAN,
+    steps=[Step.H, Step.W, Step.W, Step.W, Step.H, Step.W, Step.W],
+    numerals=["i", "II", "III", "iv", "vd", "VI", "vii"],
+    seniority=Seniority.MINOR,
+)
 
-	def notes_in_pentatonic_minor(self):
-		# for this, we should iterate through all the possible major/minor keys until we find out which shares all the notes.
-		# once we have that, we can process this more accurately.
+LYDIAN = Key(
+    mode=Mode.LYDIAN,
+    steps=[Step.W, Step.W, Step.W, Step.H, Step.W, Step.W, Step.H],
+    numerals=["I", "II", "iii", "ivd", "V", "vi", "vii"],
+    seniority=Seniority.MAJOR,
+)
 
-		new_dict = {}
-		if self.seniority == 'minor':
-			scale = self.list_notes()
-			try:
-				flatted_three = universe()[universe().index(scale[2]) - 1]
-			except:
-				flatted_three = 'gs'
-			try:
-				flatted_seventh = univers()[universe().index(scale[6]) - 1]
-			except:
-				flatted_seventh = 'gs'
+MIXOLYDIAN = Key(
+    mode=Mode.MIXOLYDIAN,
+    steps=[Step.W, Step.W, Step.H, Step.W, Step.W, Step.H, Step.W],
+    numerals=["I", "ii", "iiid", "IV", "v", "vi", "VII"],
+    seniority=Seniority.MAJOR,
+)
 
-			pentatonics = [scale[0], flatted_three, scale[3], scale[4], flatted_seventh]
+AEOLIAN = Key(
+    mode=Mode.AEOLIAN,
+    steps=[Step.W, Step.H, Step.W, Step.W, Step.H, Step.W, Step.W],
+    numerals=["i", "iid", "III", "iv", "v", "VI", "VII"],
+    seniority=Seniority.MINOR,
+)
 
-			for i in pentatonics:
-				new_dict[i] = notes(i)
+MINOR = Key(
+    mode=Mode.MINOR,
+    steps=[Step.W, Step.H, Step.W, Step.W, Step.H, Step.W, Step.W],
+    numerals=["i", "iid", "III", "iv", "v", "VI", "VII"],
+    seniority=Seniority.MINOR,
+)
 
-			return new_dict
-
-		elif self.seniority == 'major':
-			name = self.name
-			new_name = self.name.replace(self.name.split('_')[-1], 'minor')
-			k = Key(new_name)
-			return k.notes_in_pentatonic_minor()
-
-		else:
-			raise NameError(f'{self.mode} does not support pentatonics yet.')
-
-	def notes_in_pentatonic_major(self):
-		# for this, we should iterate through all the possible major/minor keys until we find out which shares all notes.
-		# once we have that, we can process this more accurately. 
-
-		new_dict = {}
-
-		if self.seniority == 'major':
-			pentatonics = self.list_notes()
-			pentatonics.pop(6)
-			pentatonics.pop(3)
-			for i in pentatonics:
-				new_dict[i] = notes(i)
-			return new_dict
-
-		elif self.seniority == 'minor':
-			name = self.name
-			new_name = self.name.replace(self.name.split('_')[-1], 'major')
-			k = Key(new_name)
-			return k.notes_in_pentatonic_major()
-
-		else:
-			raise NameError(f'{self.mode} does not support pentatonics yet.')
+LOCRIAN = Key(
+    mode=Mode.LOCRIAN,
+    steps=[Step.H, Step.W, Step.W, Step.H, Step.W, Step.W, Step.W],
+    numerals=["id", "II", "iii", "iv", "V", "VI", "vii"],
+    seniority=Seniority.DIMINISHED,
+)

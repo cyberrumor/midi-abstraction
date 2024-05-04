@@ -2,88 +2,61 @@
 
 Abstract midi pitches into keys, chords, modes, scales, and notes.
 
-This, combined with a midi file creation package like 'mido', and maybe a little help from builtin 'random', is all you need to procedurally generate music.
-
-
 # Installation
-```pip install midi_abstraction```
+```
+# From pip
+pip install midi_abstraction
+
+# From source
+pip3 install --user --break-system-packages .
+```
 - requires python 3.10 or newer
 
 # Usage
-
 ```
 #!/usr/bin/env python3
-import midi_abstraction
+import midi_abstraction as mab
 
-# create a key object. Note + either major or minor or modename
-k = midi_abstraction.Key('d_dorian')
+# Get a midi note from a letter
+octave = 4
+middle_c = mab.NOTES["c"][octave]
 
-# available list methods
-k.list_notes()
-k.list_chords()
-k.list_notes_in_octave(3)
-k.list_notes_in_pentatonic_minor()
-k.list_notes_in_pentatonic_major()
+# Get a letter note from a midi pitch
+some_note = None
+for k, v in mab.NOTES.items():
+    if 48 in v:
+        some_note = k
+        break
 
-# available dict methods
-k.chords_in_octave(3)
-k.notes_in_pentatonic_minor()
-k.notes_in_pentatonic_major()
+# Get a pitch for a drum
+side_stick = mab.Drum.SIDE_STICK.value
 
+# Get a drum from a pitch
+some_drum = mab.Drum(35)
 
-# attributes
-k.name
-k.seniority
-k.mode
-k.chords
-k.notes
+# List all drums
+list(mab.Drum)
 
-### functions not tied to a class ###
+# List all chord names
+list(mab.Chord)
 
-# get the midi pitches of a specific note
-midi_abstraction.notes('a')
-
-# get midi pitch of a specific note in specific cotave
-midi_abstraction.notes('cs')[4]
-
-# get a list of all available notes
-midi_abstraction.list_notes()
-
-# get a list of major and minor keys (doesn't list modal keys)
-midi_abstraction.list_keys()
-
-# get a list of mode names
-midi_abstraction.list_modes()
-
-# if you need to iterate through note names and don't want to hit an out of range index, use universe:
-midi_abstraction.universe()
-
-# get the midi pitches of notes in a specific chord:
-midi_abstraction.chords('c_major')
-
-# you can also invent your own chords like this if you want to get weird.
-midi_abstraction.chords('cs_e_ab')
+# Get the note names that a chord is made of
+c_major_notes = mab.CHORDS['c_major']
 
 
-#### examples of how to use ######
-# get a random modal key and create an instance of it.
-import random
-n = random.choice(midi_abstraction.list_notes())
-m = random.choice(midi_abstraction.list_keys())
-k = midi_abstraction.Key(n + '_' + m)
+# Get the notes and chords from any mode/key.
+# These are a list of sets due to enharmonic equivalence.
+c_major_chords = mab.MAJOR.chords('c')
+eb_phrygian_notes = mab.PHRYGIAN.notes('eb')
 
-# get some chords
-first = k.list_chords()[0]
-second = random.choice(k.list_chords())
-third = random.choice(k.list_chords())
+# Get chords from scale degrees
+third_degree_chord = next(iter(mab.MAJOR.chords('c')[2]))
 
-# you need mido to write midi files
-import mido
-
-# you can use a loop on [first, second, third] to push the pitches into mido tracks.
-# See https://github.com/cyberrumor/keygen/blob/main/keygen.py for an example implementation. 
-# Good luck!
+# Get the notes for a chord in a particular octave
+octave = 4
+middle_c_major_notes = []
+for note in mab.CHORDS['c_major']:
+    middle_c_major_notes.append(mab.NOTES[note][octave])
 
 ```
 
-See `testing/test.py` for a list of all available functions, classes, properties, and methods.
