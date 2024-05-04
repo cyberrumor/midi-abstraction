@@ -430,7 +430,7 @@ class Key:
             if degree >= len(SCALE):
                 degree -= 12
 
-            results.append({n.value for n in SCALE[degree]})
+            results.append(SCALE[degree])
 
             degree += step
 
