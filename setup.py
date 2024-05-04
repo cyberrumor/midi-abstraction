@@ -12,7 +12,7 @@ setuptools.setup(
     description = 'Abstract MIDI pitches into keys, chords, modes, scales, and notes.',
     long_description_content_type = 'text/markdown',
     long_description = long_description,
-    url = 'https://github.com/cyberrumor/midi_abstraction',
+    url = 'https://github.com/cyberrumor/midi-abstraction',
     packages = ['midi_abstraction'],
     classifiers = [
         'Programming Language :: Python :: 3.10',
