@@ -305,6 +305,20 @@ class Drum(int, Enum):
     OPEN_TRIANGLE = 81
 
 
+ENHARMONIC = {
+    Note.CS: Note.DB,
+    Note.DS: Note.EB,
+    Note.FS: Note.GB,
+    Note.GS: Note.AB,
+    Note.AS: Note.BB,
+    Note.DB: Note.CS,
+    Note.EB: Note.DS,
+    Note.GB: Note.FS,
+    Note.AB: Note.GS,
+    Note.BB: Note.AS,
+}
+
+
 SCALE = [
     {Note.C},
     {Note.CS, Note.DB},
